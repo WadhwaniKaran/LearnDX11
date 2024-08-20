@@ -37,7 +37,7 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 	return m_wndClass.m_hInstance;
 }
 
-Window::Window(unsigned int Width, unsigned int Height, const wchar_t* Title) noexcept
+Window::Window(unsigned int Width, unsigned int Height, const wchar_t* Title)
 {
 	RECT r{};
 	r.left = 100;
@@ -49,7 +49,14 @@ Window::Window(unsigned int Width, unsigned int Height, const wchar_t* Title) no
 	m_width = Width;
 	m_height = Height;
 
-	AdjustWindowRectEx(&r, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE, WS_EX_CLIENTEDGE);
+	
+	if (FAILED(AdjustWindowRectEx(&r,
+			WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+			FALSE, WS_EX_CLIENTEDGE))
+	)
+	{
+		throw MYWND_LAST_EXCEPT();
+	}
 
 	m_hWnd = CreateWindowEx(
 		WS_EX_CLIENTEDGE, WindowClass::GetName(), Title,
@@ -60,6 +67,11 @@ Window::Window(unsigned int Width, unsigned int Height, const wchar_t* Title) no
 		WindowClass::GetInstance(),
 		this
 	);
+
+	if (m_hWnd == nullptr)
+	{
+		throw MYWND_LAST_EXCEPT();
+	}
 
 	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
 }

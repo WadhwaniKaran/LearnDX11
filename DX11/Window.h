@@ -36,7 +36,7 @@ private:
 	};
 
 public:
-	Window(unsigned int Width, unsigned int Height, const wchar_t* Title) noexcept;
+	Window(unsigned int Width, unsigned int Height, const wchar_t* Title);
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator=(Window&) = delete;
@@ -53,3 +53,4 @@ private:
 
 // exception helper macros
 #define MYWND_EXECPT(errorCode) Window::WindowException(__LINE__, __FILE__, errorCode)
+#define MYWND_LAST_EXCEPT() Window::WindowException(__LINE__, __FILE__, GetLastError())
